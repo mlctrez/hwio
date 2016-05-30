@@ -62,9 +62,15 @@ func NewBeagleboneBlackDTDriver() *BeagleBoneBlackDriver {
 // capability surfaced via device drivers.
 func (d *BeagleBoneBlackDriver) MatchesHardwareConfig() bool {
 	// If bone_capemgr is not present, this driver won't work in any case
-	path, e := findFirstMatchingFile("/sys/devices/bone_capemgr.*/slots")
-	if e == nil && path != "" {
-		return true
+	paths := []string{
+		"/sys/devices/bone_capemgr.*/slots",
+		"/sys/devices/platform/bone_capemgr/slots",
+	}
+	for _, apath := range paths {
+		path, e := findFirstMatchingFile(apath)
+		if e == nil && path != "" {
+			return true
+		}
 	}
 	return false
 }
